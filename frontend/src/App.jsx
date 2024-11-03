@@ -31,7 +31,6 @@ function App() {
 
   useEffect(() => {
     async function contract() {
-      console.log(abi);
       const smartContractAddress = "0xec2dC41e0a5ff61D563b60aabe462C3c44de4B77"
       const signer = await provider.getSigner(account)
       const contract = new ethers.Contract(smartContractAddress, abi.abi, signer)
@@ -47,9 +46,26 @@ function App() {
       })
   }, [contract, account])
 
+  async function handleSubmit(e) {
+    e.preventDefault()
+    const [address, amount] = e.target
+    //console.log(address.value, amount.value)
+    const tx = await contract.transfer(address.value, amount.value)
+    console.log(tx)
+    await tx.wait()
+    console.log("transfered")
+  }
+
 
   return (
-    <div>{account} - {balance} tokens: {tokens}</div>
+    <div>{account} - {balance} tokens: {tokens}
+    <form onSubmit={(e) => {handleSubmit(e)}}>
+      <input type="text" name="address" placeholder='address'/>
+      <input type="text" name="amount" placeholder='amount'/>
+      <button type="submit">Save</button>
+    </form>
+    
+    </div>
   )
 }
 
